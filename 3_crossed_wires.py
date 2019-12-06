@@ -14,6 +14,21 @@ def findMaximums(wire):
         maximums[heading] += dist
     return maximums
 
+def findHorizontalSegments(wire):
+    seg = [(0,0,0,0)]
+    index = 0
+    for direction in wire:
+        heading = direction[0]
+        previous = seg[index]
+        if heading == 'L' or heading == 'R':
+            print('hey')
+        elif heading == 'U' or heading == 'D':
+            print('yo')
+
+def findVerticalSegments(wire):
+   seg = [(0,0,0,0)]
+
 MAX = 40000
 print(findMaximums(wire_1))
 print(findMaximums(wire_2))
+findHorizontalSegments(wire_1)
