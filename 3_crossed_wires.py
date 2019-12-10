@@ -1,18 +1,9 @@
 import aoc
+import math
 
 wire_paths = aoc.getInput("input3.txt")
 wire_1 = aoc.csvToList(wire_paths[0])
 wire_2 = aoc.csvToList(wire_paths[1])
-
-def findMaximums(wire):
-    maximums = {'U': 0, 'D': 0, 'L': 0, 'R': 0}
-    for direction in wire:
-        heading = direction[0]
-        dist = int(direction[1:])
-        if heading == 'L' or heading == 'D':
-            dist *= -1
-        maximums[heading] += dist
-    return maximums
 
 def findLineSegments(wire):
     seg = [[0,0,0,0]]
@@ -35,12 +26,45 @@ def findLineSegments(wire):
     seg.remove(seg[-1]) # remove point
     return seg
 
-def findIntersections(wire_1, wire_2):
-    # Find horizontal wire_1 segments that cross wire_2 vertically
+def findIntersections(wire_1_segs, wire_2_segs):
+    ''' 
+    This will find the horizontal segments from the first list, and compare it
+    to the vertical segments of the second list. Then swap the lists and do the
+    same comparison it find all intersections.
+    '''
+    poi = []
+    bit = 0 # To flip lists instead of running the function twice
+    segment_list = [wire_1_segs, wire_2_segs]
+    while bit < 2:
+        for h_line in segment_list[0 + bit]:
+            # Find horizontal segments
+            if h_line[1] == h_line[3]:
+                y = h_line[1]
+                x0 = h_line[0]
+                x1 = h_line[2]
+                for v_line in segment_list[1 - bit]:
+                    # Find vertical segments
+                    if v_line[0] == v_line[2]:
+                        x = v_line[0]
+                        y0 = v_line[1]
+                        y1 = v_line[3]
+                        # Check if the segments cross
+                        if ((x0 < x < x1) or (x1 < x < x0)) and ((y0 < y < y1) or (y1 < y < y0)):
+                            poi.append((x,y))
+        bit+=1
+    return poi
 
-    # Find vertical wire_1 segments that cross wire_2 horizontally
+def findShortestManhattanDistance(point_list):
+    magnitude = 0
+    for point in point_list:
+        # Finding the shortest magnitude irrelevant of direction
+        manhattan_dist = abs(point[0]) + abs(point[1])
+        if magnitude == 0:
+            magnitude = manhattan_dist
+        elif (manhattan_dist <= magnitude):
+            magnitude = manhattan_dist
+    return magnitude
 
-for line in findLineSegments(wire_1):
-    print(line)
-for line in findLineSegments(wire_2):
-    print(line)
+intersections = findIntersections(findLineSegments(wire_1), findLineSegments(wire_2))
+distance = findShortestManhattanDistance(intersections)
+print(distance)
