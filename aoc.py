@@ -2,6 +2,10 @@ import io
 import os
 import csv
 
+def csvToList(csvals):
+    vals = csvals.split(',')
+    return vals
+
 def getInput(filename, type=''):
     working_dir = os.path.dirname(os.path.abspath(__file__))
     file = os.path.join(working_dir, filename)
